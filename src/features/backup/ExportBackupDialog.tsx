@@ -62,6 +62,7 @@ export function ExportBackupDialog({ repository, onClose }: ExportBackupDialogPr
     try {
       const result = await createBackupExport(repository, choices);
       startBackupDownload(new Blob([result.json], { type: 'application/json;charset=utf-8' }), result.filename);
+      setChoices(Object.fromEntries(versions.map(({ id }) => [id, false])));
       setStatus(`Файл ${result.filename} подготовлен к скачиванию.`);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Не удалось подготовить резервную копию.');

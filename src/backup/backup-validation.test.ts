@@ -29,6 +29,20 @@ describe('backup format validation', () => {
     );
   });
 
+  it.each(['2025-02-30T12:00:00.000Z', '2025-04-31T12:00:00.000Z'])('rejects impossible calendar date %s', (date) => {
+    const backup = structuredClone(validV1) as Record<string, any>;
+    backup.exportedAt = date;
+    expect(() => validateBackup(backup)).toThrowError(
+      expect.objectContaining({ category: 'invalid-data' }),
+    );
+  });
+
+  it('accepts leap day on a leap year', () => {
+    const backup = structuredClone(validV1) as Record<string, any>;
+    backup.exportedAt = '2024-02-29T12:00:00.000Z';
+    expect(validateBackup(backup).exportedAt).toBe(backup.exportedAt);
+  });
+
   it('rejects duplicate version identifiers and unknown object fields', () => {
     const backup = structuredClone(validV1) as Record<string, any>;
     backup.data.versions.push(structuredClone(backup.data.versions[0]));
