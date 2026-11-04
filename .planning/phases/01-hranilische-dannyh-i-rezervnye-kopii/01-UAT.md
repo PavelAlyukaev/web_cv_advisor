@@ -1,21 +1,17 @@
 ---
-status: testing
+status: complete
 phase: 01-hranilische-dannyh-i-rezervnye-kopii
 source:
   - 01-01-SUMMARY.md
   - 01-02-SUMMARY.md
   - 01-03-SUMMARY.md
 started: 2026-11-04T10:53:04Z
-updated: 2026-11-04T11:25:00Z
+updated: 2026-11-04T12:01:53Z
 ---
 
 ## Current Test
 
-number: 4
-name: Выбор текста вакансий для каждой версии при экспорте — повторная проверка
-expected: |
-  После исправления нажатие чекбокса меняет только его значение; экспортный диалог остаётся открытым. Можно выбрать только «Frontend», скачать файл, затем открыть экспорт заново и увидеть повторное предупреждение и выключенные варианты.
-awaiting: user retest response
+[testing complete]
 
 ## Tests
 
@@ -33,31 +29,19 @@ result: pass
 
 ### 4. Выбор текста вакансий для каждой версии при экспорте
 expected: Импорт `src/backup/fixtures/manual-multi-v1.json`, затем экспорт: предупреждение о личных данных появляется каждый раз; обе версии и их даты сохраняются. Все варианты изначально выключены. Если включить текст только у версии «Frontend», скачанный JSON включает её текст, но не текст версии «Frontend — продуктовая команда». После успешного скачивания choices сбрасываются перед следующим экспортом. Имя файла имеет вид `resume-backup-ГГГГ-ММ-ДД.json`.
-reported: "При нажатии на чекбокс у фронтенда либо у одной либо у другой вакансии все сворачивается."
-severity: major
-result: issue
-resolution: "Синхронно считывать `event.currentTarget.checked` до functional state updater. Исправлено в `af0c06a`; после фикса в браузере оба чекбокса переключаются независимо, диалог не закрывается, скачивание сбрасывает их, а повторное открытие снова показывает предупреждение с выключенными вариантами."
-retest: pending_user_confirmation
+previous_attempt: issue — чекбокс закрывал диалог экспорта.
+resolution: "Синхронно считывать event.currentTarget.checked до функционального обновления состояния; коммит af0c06a. Пользователь повторно подтвердил, что выбор не закрывает окно, варианты независимы, а повторный экспорт сбрасывает их. Проверки сервиса подтверждают выбор текста по версии и сохранение дат."
+result: pass
 
 ## Summary
 
 total: 4
-passed: 3
-issues: 1
+passed: 4
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
 
 ## Gaps
 
-- truth: "Экспорт нескольких версий сохраняет все версии и даты, включает полный текст только для выбранных версий и сбрасывает выбор после скачивания."
-  status: failed
-  reason: "Первый UI запуск обнаружил закрытие диалога при переключении checkbox; исправление закоммичено в af0c06a и проверено в браузере и тестами, ожидается подтверждение повторного теста."
-  severity: major
-  test: 4
-  root_cause: "React functional state updater обращался к SyntheticEvent.currentTarget уже после завершения события."
-  artifacts:
-    - path: src/features/backup/ExportBackupDialog.tsx
-      issue: "Обработчик синхронно считывает checkbox.checked перед setChoices."
-  missing: []
-  debug_session: ""
+Нет открытых пробелов.
