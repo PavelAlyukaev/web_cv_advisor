@@ -66,8 +66,8 @@
 | VERSION-01 | Phase 4 | Pending |
 | VERSION-02 | Phase 4 | Pending |
 | PDF-01 | Phase 5 | Pending |
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Implemented; browser acceptance pending |
+| DATA-02 | Phase 1 | Implemented; browser acceptance pending |
 
 **Покрытие:**
 - Требований v1: 13
