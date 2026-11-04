@@ -93,7 +93,10 @@ export function ExportBackupDialog({ repository, onClose }: ExportBackupDialogPr
                 <input
                   type="checkbox"
                   checked={choices[version.id] === true}
-                  onChange={(event) => setChoices((current) => ({ ...current, [version.id]: event.currentTarget.checked }))}
+                  onChange={(event) => {
+                    const checked = event.currentTarget.checked;
+                    setChoices((current) => ({ ...current, [version.id]: checked }));
+                  }}
                 />
                 <span>
                   <strong>{version.name}</strong>

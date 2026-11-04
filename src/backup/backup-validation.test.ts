@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 import { describe, expect, it } from 'vitest';
 import validV1 from './fixtures/valid-v1.json';
+import manualMultiVersion from './fixtures/manual-multi-v1.json';
 import unsupportedVersion from './fixtures/unsupported-version.json';
 import invalidFields from './fixtures/invalid-fields.json';
 import overLimit from './fixtures/over-limit.json';
@@ -11,6 +12,10 @@ import { BackupValidationError, validateBackup } from './backup-validation';
 describe('backup format validation', () => {
   it('accepts the complete supported v1 envelope', () => {
     expect(validateBackup(validV1).schemaVersion).toBe(1);
+  });
+
+  it('accepts the manual two-version UAT fixture', () => {
+    expect(validateBackup(manualMultiVersion).data.versions).toHaveLength(2);
   });
 
   it('rejects unsupported versions with an actionable category', () => {
