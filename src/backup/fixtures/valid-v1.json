@@ -1,0 +1,28 @@
+{
+  "format": "resume-backup",
+  "schemaVersion": 1,
+  "exportedAt": "2026-11-04T12:00:00.000Z",
+  "data": {
+    "masterResume": {
+      "contacts": { "fullName": "Анна Иванова", "email": "anna@example.com", "phone": "+7 900 000-00-00", "location": "Новосибирск" },
+      "summary": "Frontend-разработчик",
+      "skills": ["React", "TypeScript"],
+      "workExperience": [],
+      "education": []
+    },
+    "versions": [{
+      "id": "version-1",
+      "name": "Frontend",
+      "resume": {
+        "contacts": { "fullName": "Анна Иванова", "email": "anna@example.com", "phone": "+7 900 000-00-00", "location": "Новосибирск" },
+        "summary": "Frontend-разработчик",
+        "skills": ["React", "TypeScript"],
+        "workExperience": [],
+        "education": []
+      },
+      "vacancy": { "title": "Frontend-разработчик", "company": "Пример", "text": "Ищем React-разработчика" },
+      "createdAt": "2026-11-03T10:00:00.000Z",
+      "updatedAt": "2026-11-04T11:00:00.000Z"
+    }]
+  }
+}

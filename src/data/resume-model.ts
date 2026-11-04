@@ -6,6 +6,7 @@ export interface ContactInfo {
 }
 
 export interface WorkExperience {
+  id: string;
   company: string;
   position: string;
   location: string;
@@ -16,6 +17,7 @@ export interface WorkExperience {
 }
 
 export interface EducationEntry {
+  id: string;
   institution: string;
   degree: string;
   fieldOfStudy: string;
