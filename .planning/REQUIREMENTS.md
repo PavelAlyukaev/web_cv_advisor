@@ -66,8 +66,8 @@
 | VERSION-01 | Phase 4 | Pending |
 | VERSION-02 | Phase 4 | Pending |
 | PDF-01 | Phase 5 | Pending |
-| DATA-01 | Phase 1 | Implemented; browser acceptance pending |
-| DATA-02 | Phase 1 | Implemented; browser acceptance pending |
+| DATA-01 | Phase 1 | Verified; browser UAT passed |
+| DATA-02 | Phase 1 | Verified; browser UAT passed |
 
 **Покрытие:**
 - Требований v1: 13
@@ -76,4 +76,4 @@
 
 ---
 *Требования определены: 2026-11-04*  
-*Последнее обновление: 2026-11-04 после создания дорожной карты*
+*Последнее обновление: 2026-11-04 после завершения браузерного UAT фазы 1*

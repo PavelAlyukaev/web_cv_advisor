@@ -1,8 +1,8 @@
 ---
 phase: "01"
 slug: "hranilische-dannyh-i-rezervnye-kopii"
-status: draft
-nyquist_compliant: false
+status: validated
+nyquist_compliant: true
 wave_0_complete: true
 created: "2026-11-04"
 ---
@@ -21,7 +21,7 @@ created: "2026-11-04"
 | **Config file** | `vite.config.ts` (`test` configuration) |
 | **Quick run command** | `npm test` (all focused unit/integration tests; target under 30 seconds) |
 | **Full suite command** | `npm run build && npm test` |
-| **Estimated runtime** | Under 30 seconds for quick suite; measure during Wave 0 |
+| **Estimated runtime** | Under 30 seconds; latest full run is recorded in `01-VERIFICATION.md` (5 files, 23 tests). |
 
 ---
 
@@ -41,21 +41,21 @@ created: "2026-11-04"
 | 01-01 | 01 | 1 | DATA-01, DATA-02 | T-01-01 | No SUS package is installed before user verifies the upstream and npm records | provenance gate | `node -e "const s=require('node:fs').readFileSync('.planning/phases/01-hranilische-dannyh-i-rezervnye-kopii/01-RESEARCH.md','utf8');const n=['vite','react','react-dom','@vitejs/plugin-react','vitest','fake-indexeddb'];const q=String.fromCharCode(96);const rows=s.split(/\r?\n/).filter(x=>x.startsWith('|'));const missing=n.filter(p=>!rows.some(r=>r.includes(q+p+q)));if(missing.length){console.error(missing.join(', '));process.exit(1)}console.log('all SUS package audit rows present')"` | ✅ | ✅ approved before install |
 | 01-02 | 01 | 1 | DATA-01, DATA-02 | T-01-01 / T-01-SC | The Vite/React/TypeScript shell and test scripts build from the locked manifest | build | `npm run build` | ✅ | ✅ passed |
 | 01-03 | 01 | 1 | DATA-01, DATA-02 | — | Master/profile/version contracts have independent empty data and snapshot shapes | unit | `npm test -- src/data/resume-model.test.ts` | ✅ | ✅ passed (2 tests) |
-| 01-04 | 02 | 2 | DATA-01, DATA-02 | T-01-02 / T-01-SC | IndexedDB stores and atomically replaces one complete state record | IndexedDB integration | `npm test -- src/data/indexed-db.test.ts` | ❌ W0 | ⬜ pending |
-| 01-05 | 02 | 2 | DATA-02 | T-01-02 / T-01-03 | Invalid, unsupported, or over-limit JSON is rejected before persistence | unit | `npm test -- src/backup/backup-validation.test.ts` | ❌ W0 | ⬜ pending |
-| 01-06 | 02 | 2 | DATA-01, DATA-02 | T-01-02 / T-01-05 | Import does not partially write; export honors per-version choices and dates | unit + IndexedDB integration | `npm test -- src/backup/backup-import.test.ts src/backup/backup-export.test.ts` | ❌ W0 | ⬜ pending |
-| 01-07 | 03 | 3 | DATA-02 | T-01-04 / T-01-02 | Preview is redacted, current backup is offered, invalid/cancelled imports preserve current data | browser acceptance | Manual browser check in `01-03-PLAN.md` | ❌ W0 | ⬜ pending |
-| 01-08 | 03 | 3 | DATA-01 | T-01-06 / T-01-05 | Repeated warning and fresh per-version choices control the downloaded JSON | browser acceptance | Manual browser check in `01-03-PLAN.md` | ❌ W0 | ⬜ pending |
+| 01-04 | 02 | 2 | DATA-01, DATA-02 | T-01-02 / T-01-SC | IndexedDB stores and atomically replaces one complete state record | IndexedDB integration | `npm test -- src/data/indexed-db.test.ts` | ✅ `src/data/indexed-db.test.ts` | ✅ passed (5 tests; includes read-error connection cleanup) |
+| 01-05 | 02 | 2 | DATA-02 | T-01-02 / T-01-03 | Invalid, unsupported, or over-limit JSON is rejected before persistence | unit | `npm test -- src/backup/backup-validation.test.ts` | ✅ `src/backup/backup-validation.test.ts` | ✅ passed (10 tests) |
+| 01-06 | 02 | 2 | DATA-01, DATA-02 | T-01-02 / T-01-05 | Import does not partially write; export honors per-version choices and dates | service/unit | `npm test -- src/backup/backup-import.test.ts src/backup/backup-export.test.ts` | ✅ both test files | ✅ passed (6 tests; IndexedDB integration is covered by 01-04) |
+| 01-07 | 03 | 3 | DATA-02 | T-01-04 / T-01-02 | Preview is redacted, current backup is offered, invalid/cancelled imports preserve current data | browser acceptance | **Manual-only:** `01-03-PLAN.md` human-check; accepted in `01-UAT.md` tests 1–3. `npm run build` is the plan's automated compile check, not a behavioral UI test. | Manual UAT complete | ✅ passed (UAT 1–3) |
+| 01-08 | 03 | 3 | DATA-01 | T-01-06 / T-01-05 | Repeated warning and fresh per-version choices control the downloaded JSON | browser acceptance | **Manual-only:** `01-03-PLAN.md` human-check; accepted in `01-UAT.md` test 4. `npm run build` is the plan's automated compile check, not a behavioral UI test. | Manual UAT complete | ✅ passed (UAT 4) |
 
 ---
 
 ## Wave 0 Requirements
 
-- [ ] Install/configure Vitest and `fake-indexeddb` only after the blocking package-provenance approvals; make `npm test` run the configured tests.
-- [ ] Add fixtures for a valid v1 backup, malformed JSON, unknown versions, invalid field types, over-limit input, and vacancy text included/excluded.
-- [ ] Add parser/schema/current-version dispatch/export unit checks.
-- [ ] Add IndexedDB integration checks for read/write, successful replacement, transaction abort/error, and unchanged state after rejection/cancellation.
-- [ ] Measure that the full `npm test` quick suite stays under 30 seconds.
+- [x] Install/configure Vitest and `fake-indexeddb` only after the blocking package-provenance approvals; make `npm test` run the configured tests.
+- [x] Add fixtures for a valid v1 backup, malformed JSON, unknown versions, invalid field types, over-limit input, and vacancy text included/excluded.
+- [x] Add parser/schema/current-version dispatch/export unit checks.
+- [x] Add IndexedDB integration checks for read/write, successful replacement, transaction abort/error, and unchanged state after rejection/cancellation.
+- [x] Confirm the full `npm test` quick suite stays under 30 seconds (latest successful run: 5 files / 23 tests; see `01-VERIFICATION.md`).
 
 ---
 
@@ -72,10 +72,17 @@ created: "2026-11-04"
 ## Validation Sign-Off
 
 - [x] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Sampling continuity: all code tasks have an automated check; UI behavior has browser UAT. No task is left without verification.
 - [x] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 30s for quick suite
-- [ ] `nyquist_compliant: true` set in frontmatter after validation
+- [x] No watch-mode flags
+- [x] Feedback latency < 30s for quick suite (latest recorded full run completed successfully)
+- [x] `nyquist_compliant: true` set in frontmatter after validation
 
-**Approval:** Wave 0 runner and build verified; remaining phase checks are assigned to Plans 02 and 03.
+**Approval:** Wave 0 is complete. Automated checks cover the model, IndexedDB, validation, import, and export services; browser-specific UI behavior remains manual-only and passed all four UAT scenarios.
+
+## Validation Audit (2026-11-04)
+
+- Reconciled all eight task rows with the three phase plans, the latest `01-VERIFICATION.md`, and `01-UAT.md`.
+- Five existing Vitest files cover all planned automated behavior; the latest full run recorded by the verifier passed 23 tests. No additional narrow test was missing.
+- Tasks 01-07 and 01-08 remain manual-only for user-visible dialog, preview, warning, checkbox, and browser-download behavior. Their compile check is `npm run build`; it is not counted as an automated behavioral test. UAT scenarios 1–4 passed, including the checkbox regression retest.
+- A local audit rerun of `npm test` could not start Vitest because the restricted shell returned `spawn EPERM` while Vite loaded its config. The successful post-source-commit test run from `01-VERIFICATION.md` is retained as the run evidence; no test is marked passed based on this failed rerun.

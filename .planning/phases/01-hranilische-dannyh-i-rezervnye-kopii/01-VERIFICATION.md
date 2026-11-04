@@ -1,21 +1,15 @@
 ---
 phase: 01-hranilische-dannyh-i-rezervnye-kopii
-verified: 2026-11-04T10:49:09Z
-status: human_needed
-score: 7/10 must-haves verified
+verified: 2026-11-04T12:11:21Z
+status: passed
+score: 10/10 must-haves verified
 covered_files:
-  - .gitignore
-  - .planning/REQUIREMENTS.md
-  - .planning/ROADMAP.md
-  - .planning/WINDOWS.md
   - .planning/phases/01-hranilische-dannyh-i-rezervnye-kopii/01-01-PLAN.md
   - .planning/phases/01-hranilische-dannyh-i-rezervnye-kopii/01-01-SUMMARY.md
   - .planning/phases/01-hranilische-dannyh-i-rezervnye-kopii/01-02-PLAN.md
   - .planning/phases/01-hranilische-dannyh-i-rezervnye-kopii/01-02-SUMMARY.md
   - .planning/phases/01-hranilische-dannyh-i-rezervnye-kopii/01-03-PLAN.md
   - .planning/phases/01-hranilische-dannyh-i-rezervnye-kopii/01-03-SUMMARY.md
-  - .planning/phases/01-hranilische-dannyh-i-rezervnye-kopii/01-REVIEW-DISPOSITION.md
-  - .planning/phases/01-hranilische-dannyh-i-rezervnye-kopii/01-REVIEW.md
   - README.md
   - index.html
   - package-lock.json
@@ -31,6 +25,8 @@ covered_files:
   - src/backup/backup-validation.ts
   - src/backup/fixtures/invalid-fields.json
   - src/backup/fixtures/malformed.json
+  - src/backup/fixtures/manual-alt-v1.json
+  - src/backup/fixtures/manual-multi-v1.json
   - src/backup/fixtures/over-limit.json
   - src/backup/fixtures/unsupported-version.json
   - src/backup/fixtures/valid-v1.json
@@ -47,106 +43,113 @@ covered_files:
   - src/test/setup.ts
   - tsconfig.json
   - vite.config.ts
-covered_digest: "v4:sha256:e75b0df7249860462bf8d6ee4a4c3c01fdaeecaafa268416b802f607209bb375"
-behavior_unverified: 3
+covered_digest: "v4:sha256:67c717d517c9c3c2193b7e1ceb463d77a3380fb702a3d9c8486b26f99fcc1bd3"
+behavior_unverified: 0
 overrides_applied: 0
-behavior_unverified_items:
-  - truth: "The user can review a safe import summary and confirm or cancel before current data is replaced."
-    test: "Import a valid JSON backup through the browser, inspect preview, then cancel and confirm replacement in separate attempts."
-    expected: "Preview excludes full resume/vacancy text; cancel leaves the prior dataset unchanged; confirmation replaces the complete dataset."
-    why_human: "The service tests cover validation and replacement semantics, but the real browser file-picker and UI state flow were not exercised with seeded data."
-  - truth: "The user sees a fresh vacancy-text choice for every version on each export."
-    test: "Import a backup containing at least two saved versions, export once with different choices, then export again."
-    expected: "Every new attempt starts unchecked; the file contains all versions and timestamps and only the selected full vacancy texts."
-    why_human: "Serializer tests cover inclusion/exclusion, while the multi-version UI selection and downloaded file were not inspected in a browser."
-  - truth: "When current browser data exists, import offers a backup of it before replacement."
-    test: "With a non-empty local dataset, select another valid backup and use the current-data backup offer before confirming replacement."
-    expected: "The shared export warning and choices appear; declining the download still leaves an explicit replacement confirmation."
-    why_human: "The callback is wired in code, but the offer depends on non-empty IndexedDB state that was not seeded in the browser."
-human_verification:
-  - test: "Восстановление и защита текущих данных в браузере"
-    expected: "Загрузить валидную копию, затем другую копию: предпросмотр показывает только счётчики и названия; до подтверждения доступно скачивание текущих данных; отмена сохраняет исходные данные, подтверждение заменяет полный набор. Невалидная и неподдерживаемая копии не изменяют данные."
-    why_human: "Сервисные тесты проверяют валидацию, отсутствие записи при отмене и одну атомарную замену, но браузерный сценарий с выбранным файлом и существующими данными не был выполнен."
-  - test: "Экспорт нескольких версий с выбором текста вакансии"
-    expected: "Для двух и более версий предупреждение показывается при каждой попытке, каждый новый экспорт начинает с неотмеченных вариантов, в скачанном JSON остаются все версии и даты, а полный текст есть только у отмеченных версий."
-    why_human: "Тесты сериализатора покрывают включение/исключение текста и сохранение дат; браузерная проверка выбора нескольких версий и проверки скачанного файла не выполнена."
-  - test: "Предложение сохранить текущую копию перед заменой"
-    expected: "Когда в IndexedDB уже есть данные, диалог импорта предлагает скачать текущую копию через общий экспортный диалог до подтверждения замены."
-    why_human: "Код связан через callback, но UI с непустым текущим хранилищем не проверен в браузере."
 ---
 
-# Фаза 1: проверка хранилища и резервных копий
+# Фаза 1: проверка локального хранилища и резервных копий
 
 **Цель фазы:** подготовить локальную основу для приёма, сохранения и переноса профиля резюме и связанных версий.
 
-**Статус:** `human_needed` — реализация и автоматические проверки проходят; три пользовательских сценария с выбранными файлами и несколькими версиями ожидают ручной проверки.
+**Проверено:** 2026-11-04 12:11 UTC  
+**Статус:** `passed`  
+**Повторная проверка:** нет; предыдущий отчёт не содержал `gaps`, а все прежние пункты для ручной проверки теперь приняты в браузерном UAT.
 
 ## Проверяемые истины
 
-| # | Истина | Статус | Фактическое свидетельство |
+| # | Истина | Статус | Свидетельство |
 |---:|---|---|---|
-| 1 | Приложение собирается как локальный Vite + React + TypeScript проект без сервера аккаунтов. | VERIFIED | `npm run build` завершился успешно; `src/main.tsx` монтирует локальный `App`, удалённых API вызовов нет. |
-| 2 | Модель представляет основное резюме и независимые сохранённые версии с данными вакансии и датами. | VERIFIED | `src/data/resume-model.ts`; `src/data/resume-model.test.ts` проверяет пустую модель и независимые вложенные объекты. |
-| 3 | Приложение читает и атомарно заменяет весь набор резюме в IndexedDB. | VERIFIED | `src/data/indexed-db.ts` и `src/data/resume-repository.ts`; named test `keeps the previously committed state when a replacement cannot be cloned` прошёл, также есть тест сохранения/повторного чтения. |
-| 4 | Резервная копия содержит явный формат и schema version, основное резюме, все версии и их даты. | VERIFIED | `backup-format.ts`, строгая runtime-валидация, тест `includes master and every version, preserving dates and per-version text choices` прошёл. |
-| 5 | Данные полностью валидируются до записи, а подтверждённый импорт заменяет набор ровно один раз. | VERIFIED | `backup-import.ts` вызывает валидацию до preview/restore; named test `does not write on cancel and replaces the full state exactly once after confirmation` прошёл. UI-клик по подтверждению дополнительно проверяется в ручном сценарии ниже. |
-| 6 | Экспорт включает все версии, но может исключить полный текст вакансии по отдельному выбору. | VERIFIED | Сервисный тест экспорта проверяет обе версии, даты и per-version выбор текста; диалог передаёт `choices` в `createBackupExport`. |
-| 7 | Пользователь видит безопасный предпросмотр и может отменить замену до перезаписи данных. | PRESENT_BEHAVIOR_UNVERIFIED | `ImportBackupDialog.tsx` рендерит только счётчики/названия и вызывает restore только отдельной кнопкой; сервисный тест отмены проходит, но загрузка файла через реальный file picker не проверена. См. ручной сценарий 1. |
-| 8 | При наличии текущих данных импорт предлагает скачать их до замены. | PRESENT_BEHAVIOR_UNVERIFIED | В диалоге условие `currentDataExists` показывает callback в общий экспорт. UI с непустой IndexedDB пока не проверен. См. ручной сценарий 3. |
-| 9 | Каждая попытка экспорта показывает предупреждение и требует свежего выбора текста для каждой версии. | PRESENT_BEHAVIOR_UNVERIFIED | Предупреждение повторно показано при повторном открытии диалога; после успешного экспорта choices сбрасываются. Для нескольких версий и содержимого скачанного файла требуется ручная проверка. См. ручной сценарий 2. |
-| 10 | Скачиваемый файл использует дату в имени и несёт выбранные данные. | VERIFIED | UI smoke показал статус `resume-backup-2026-11-04.json`; сериализаторный тест проверяет выбранные данные и сохранение версий/дат. |
+| 1 | Приложение собирается как локальный Vite + React + TypeScript проект без сервиса аккаунтов. | VERIFIED | `package.json`, `index.html`, `src/main.tsx`, `src/App.tsx`; производственная сборка успешно прошла после последнего изменения кода по результату запуска оркестратора. Повторный локальный запуск в изолированной оболочке завершился `spawn EPERM` при загрузке конфигурации Vite. |
+| 2 | Модель представляет основное резюме и независимые версии с метаданными вакансии и датами. | VERIFIED | `src/data/resume-model.ts` содержит отдельные профили и `createdAt`/`updatedAt`; модельные тесты проверяют пустые данные и независимость версий. |
+| 3 | Приложение читает и заменяет весь набор данных в IndexedDB, сохраняя прежнее состояние при неудачной транзакции. | VERIFIED | `src/data/resume-repository.ts` читает и заменяет полную запись, `src/data/indexed-db.ts` управляет базой. Тесты IndexedDB проверяют чтение/запись, атомарную замену и rollback; последний фикс закрывает соединение на ошибке чтения. |
+| 4 | JSON-копия имеет явную версию схемы и сохраняет основное резюме, все версии и их даты. | VERIFIED | `src/backup/backup-format.ts`, миграции и валидатор задают формат; тест экспорта проверяет все версии и даты. |
+| 5 | Некорректная копия отклоняется до записи, а подтверждённый импорт заменяет весь набор. | VERIFIED | `src/backup/backup-import.ts` мигрирует и проверяет данные до восстановления, затем вызывает единый `replaceCurrent`; тест импорта проверяет отказ без записи, отмену и единственную полную замену. Браузерный UAT подтвердил также отказ malformed и неподдерживаемого файла без потери данных. |
+| 6 | Экспорт содержит все версии и включает текст вакансии только по выбору для каждой версии. | VERIFIED | `src/backup/backup-export.ts` строит набор по каждому ID версии; тест сериализации проверяет раздельный выбор и даты. Браузерный UAT подтвердил две версии и включение текста только в выбранной. |
+| 7 | Пользователь видит безопасный предпросмотр и может отменить замену до перезаписи данных. | VERIFIED | `buildBackupPreview` возвращает только счётчики и названия вакансий/компаний; `ImportBackupDialog` показывает отдельное подтверждение замены. UAT проверил отсутствие контактов и полного текста, успешный импорт. |
+| 8 | При наличии данных импорт предлагает сначала скачать текущую копию. | VERIFIED | `ImportBackupDialog` показывает предложение только для непустого хранилища и вызывает общий экспортный диалог. UAT подтвердил скачивание, отмену импорта с сохранением прежних данных и последующую замену профилем из выбранной копии. |
+| 9 | Каждая попытка экспорта показывает предупреждение и свежие независимые варианты для текста каждой вакансии. | VERIFIED | `ExportBackupDialog` всегда рендерит предупреждение, инициализирует варианты выключенными, меняет только отмеченную версию и очищает варианты после скачивания. Полный UAT подтвердил независимое переключение, открытый диалог, сброс выбора и повтор предупреждения. |
+| 10 | JSON-файл получает согласованное имя с датой и выбранным содержимым. | VERIFIED | `backup-export.ts` создаёт имя `resume-backup-ГГГГ-ММ-ДД.json`; тесты экспорта и браузерный UAT проверили имя и загруженное содержимое. |
 
-**Результат:** 7/10 истин подтверждены полностью; 3 поведения реализации присутствуют и связаны, но UI end-to-end требует ручного подтверждения.
+**Результат:** 10/10 истин подтверждены; не осталось непроверенных поведенческих истин.
 
-## Артефакты и связи
+## Обязательные артефакты
 
-Все обязательные артефакты трёх планов существуют и прошли проверки GSD `verify.artifacts` (9/9). Все ключевые связи прошли `verify.key-links` (6/6): entry point → React app, import UI → validated restore → repository и export UI → serializer → repository.
+| Артефакт | Назначение | Статус | Свидетельство |
+|---|---|---|---|
+| `package.json` | Скрипты и зафиксированные зависимости | VERIFIED | Содержит локальные dev/build/test скрипты и версии зависимостей. |
+| `src/data/resume-model.ts` | Модель профиля и версий | VERIFIED | Полные типы резюме, вакансии, дат и пустого начального состояния. |
+| `src/data/resume-repository.ts` | IndexedDB репозиторий | VERIFIED | Читает и атомарно заменяет полный набор данных. |
+| `src/backup/backup-validation.ts` | Проверка входной копии | VERIFIED | Runtime-валидация и ясные ошибки для неверных данных. |
+| `src/backup/backup-import.ts` | Предпросмотр и восстановление | VERIFIED | Размер/JSON проверяются до записи; restore подтверждён и использует полную замену. |
+| `src/backup/backup-export.ts` | Сериализация и скачивание JSON | VERIFIED | Все версии/даты сохраняются, текст фильтруется по выбору, есть дата в имени. |
+| `src/features/backup/ImportBackupDialog.tsx` | UI импорта | VERIFIED | Выбор файла, редактируемый путь до подтверждения, redacted preview, текущая копия и ошибки. |
+| `src/features/backup/ExportBackupDialog.tsx` | UI экспорта | VERIFIED | Повторное предупреждение и per-version варианты, wired to export service. |
+| `src/features/backup/BackupPanel.tsx` | Доступные действия импорта/экспорта | VERIFIED | Диалоги достижимы из приложения и используют реальный IndexedDB репозиторий. |
 
-Цепочка данных проходит от выбранного JSON файла через размерную и структурную проверку к redacted preview и атомарному IndexedDB replacement. Экспорт читает весь набор из репозитория, применяет выбор для каждого version ID и передаёт JSON в browser download adapter, который отзывает object URL.
+Все 9 артефактов прошли GSD `verify.artifacts` (9/9). Они содержательны и подключены к пользовательскому потоку.
 
-## Автоматические и браузерные проверки
+## Проверка ключевых связей
 
-| Проверка | Результат |
-|---|---|
-| `npm run build` | PASS — `tsc --noEmit` и Vite production build. |
-| `npm test` | PASS — 5 файлов, 21 тест; отключённых тестов не найдено. |
-| Named import test | PASS — отмена не пишет, подтверждение вызывает одну замену всего состояния. |
-| Named export test | PASS — все версии/даты сохранены, текст включается отдельно для каждой версии. |
-| Named IndexedDB rollback test | PASS — предыдущая запись остаётся доступной после неудачной замены. |
-| Browser smoke | PASS — диалоги открываются, повторное предупреждение отображается, имя файла содержит локальную дату, фокус возвращается на кнопки-триггеры. |
-| Seeded import и multi-version UI acceptance | NEEDS HUMAN — детальные шаги указаны выше. |
+| От | К | Через | Статус |
+|---|---|---|---|
+| `index.html` | `src/main.tsx` | Vite module entry | WIRED |
+| `src/main.tsx` | `src/App.tsx` | React `createRoot` | WIRED |
+| `src/backup/backup-import.ts` | `src/data/resume-repository.ts` | `replaceCurrent` после проверки и подтверждения | WIRED |
+| `src/backup/backup-export.ts` | `src/data/resume-repository.ts` | `readCurrent` полного набора | WIRED |
+| `src/features/backup/ImportBackupDialog.tsx` | `src/backup/backup-import.ts` | parse, preview, restore | WIRED |
+| `src/features/backup/ExportBackupDialog.tsx` | `src/backup/backup-export.ts` | fresh per-version choices перед скачиванием | WIRED |
 
-Проверка review замечаний: чистый повторный `01-REVIEW.md`; все 3 прежних замечания имеют `fixed` disposition в `01-REVIEW-DISPOSITION.md`.
+Все 6 связей прошли GSD `verify.key-links` (6/6).
+
+## Поток данных
+
+| Артефакт | Значение | Источник | Статус |
+|---|---|---|---|
+| Предпросмотр импорта | Количество профилей/версий, названия компаний/вакансий | Выбранный JSON после проверки формата и схемы | FLOWING; приватные поля и полный текст не выводятся |
+| Восстановленные данные | Профиль и все версии | Проверенная копия → `replaceCurrent` → IndexedDB | FLOWING |
+| JSON-экспорт | Профиль, версии, даты и выбранный текст вакансии | `readCurrent` из IndexedDB → фильтрация `choices` → download | FLOWING |
+| Предложение текущей копии | Признак наличия сохранённых данных | `readCurrent` из IndexedDB → UI импорта | FLOWING |
+
+## Поведенческие проверки
+
+| Поведение | Команда/проверка | Результат | Статус |
+|---|---|---|---|
+| Проверка сборки | `npm run build` после последнего source commit, выполнена оркестратором | Успешно. Повторный вызов из текущей ограниченной оболочки блокирует системный `spawn` с `EPERM` при загрузке Vite config. | PASS |
+| Автоматические тесты | Полный набор после последнего source commit, выполнен оркестратором | 5 файлов, 23 теста пройдены. Отдельный повтор в текущей оболочке также блокируется `spawn EPERM` до старта Vitest. | PASS |
+| Импорт валидной копии | Браузерный UAT, тест 1 | Redacted preview совпал; подтверждение восстановило данные. | PASS |
+| Ошибочные/неподдерживаемые файлы | Браузерный UAT, тест 2 | Оба файла отклонены; данные прежние и доступны для экспорта. | PASS |
+| Предложение сохранить прежние данные | Браузерный UAT, тест 3 | Текущая копия скачана, отмена сохранила прежний профиль, подтверждение заменило его новым. | PASS |
+| Выбор текста по версиям | Браузерный UAT, тест 4 | Предупреждение повторяется, чекбоксы независимы и не закрывают окно, данные выбора сбрасываются после экспорта. | PASS |
 
 ## Покрытие требований
 
 | Требование | План | Статус | Свидетельство |
 |---|---|---|---|
-| DATA-01 — экспорт основного резюме и сохранённых версий в JSON | 01-01, 01-02, 01-03 | NEEDS HUMAN | Тесты сериализатора и smoke имени/предупреждения проходят; выбор нескольких версий в скачанном browser JSON ожидает ручной проверки. |
-| DATA-02 — импорт ранее созданной JSON-копии | 01-01, 01-02, 01-03 | NEEDS HUMAN | Validator, preview/restore service, cancellation и atomic replace проверены unit-тестами; файловый UI flow ожидает ручной проверки. |
+| DATA-01 — экспорт основного резюме и сохранённых версий в JSON | 01-01, 01-02, 01-03 | SATISFIED | Тест сериализации и успешный браузерный экспорт двух версий; повторное предупреждение, независимый выбор текста, сброс вариантов и даты подтверждены. |
+| DATA-02 — импорт JSON-копии | 01-01, 01-02, 01-03 | SATISFIED | Тесты валидации/отмены/замены плюс браузерные проверки валидной, некорректной и неподдерживаемой копий и замены существующих данных. |
 
-Таблица прослеживаемости `REQUIREMENTS.md` синхронизирована с текущим состоянием: DATA-01/02 реализованы, браузерное подтверждение осталось.
-
-### Аудит качества тестов
-
-| Файл | Связанные требования | Активные тесты | Пропущенные | Уровень утверждений | Итог |
-|---|---|---:|---:|---|---|
-| `src/data/indexed-db.test.ts` | DATA-02 | 4 | 0 | Поведенческий: чтение/запись/повторное чтение, rollback | PASS |
-| `src/backup/backup-validation.test.ts` | DATA-01, DATA-02 | 9 | 0 | Значения и граничные условия схемы | PASS |
-| `src/backup/backup-import.test.ts` | DATA-02 | 4 | 0 | Поведенческий: invalid/cancel/one replacement | PASS |
-| `src/backup/backup-export.test.ts` | DATA-01 | 2 | 0 | Поведенческий: версии/даты/выбор текста/download cleanup | PASS |
-| `src/data/resume-model.test.ts` | DATA-01, DATA-02 | 2 | 0 | Значения и независимость модели | PASS |
-
-**Отключённых тестов:** 0. **Циклических проверок:** 0 выявлено. **Недостаточных утверждений:** нет для проверяемых сервисных контрактов; UI acceptance остаётся отдельной ручной проверкой.
+Таблица прослеживаемости в `.planning/REQUIREMENTS.md` обновлена: DATA-01 и DATA-02 отмечены `Verified; browser UAT passed`.
 
 ## Анти-паттерны
 
-`TBD`, `FIXME`, `XXX`, `TODO`, `HACK`, заглушек `placeholder`, `dangerouslySetInnerHTML`, `console.log` и удалённых `fetch()` в просмотренных source-файлах не найдено. Тесты содержат активные assertions; skipped/only тестов не обнаружено.
+Проверены исходники фазы: `TBD`, `FIXME`, `XXX`, `TODO`, `HACK`, заглушки, `dangerouslySetInnerHTML`, `console.log` и удалённые `fetch()` не найдены.
+
+| Файл | Строка | Паттерн | Серьёзность | Влияние |
+|---|---:|---|---|---|
+| — | — | Не найдено | — | — |
+
+Повторный code review просмотрел 17 файлов и завершён со статусом `clean`, 0 открытых замечаний. Все 4 зарегистрированных пункта имеют disposition `fixed`.
 
 ## Ручная проверка
 
-1. Восстановление и защита текущих данных в браузере (подробности в frontmatter выше).
-2. Экспорт нескольких версий с выбором текста вакансии (подробности в frontmatter выше).
-3. Предложение сохранить текущую копию перед заменой (подробности в frontmatter выше).
+Пользовательский браузерный UAT завершён: 4/4 проверки пройдены, открытых замечаний нет. Отдельно подтверждено исправление, после которого нажатие чекбокса больше не сворачивает диалог экспорта.
 
-До подтверждения этих сценариев фазу следует считать реализованной, но не принятой пользователем.
+## Итог
+
+Обе цели фазы достигнуты: пользователь может проверить и восстановить JSON-копию с основным резюме и версиями и может скачать JSON-копию с выбранным содержимым. Плановые артефакты существуют, ключевые связи и потоки данных подключены, автоматическая проверка и полный браузерный UAT приняты.
+
+---
+
+_Проверено: 2026-11-04T12:11:21Z_  
+_Проверяющий: gsd-verifier_
