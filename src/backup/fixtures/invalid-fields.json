@@ -1,0 +1,9 @@
+{
+  "format": "resume-backup",
+  "schemaVersion": 1,
+  "exportedAt": "yesterday",
+  "data": {
+    "masterResume": { "contacts": { "fullName": 4 }, "summary": "", "skills": [], "workExperience": [], "education": [] },
+    "versions": []
+  }
+}

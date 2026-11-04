@@ -1,0 +1,38 @@
+{
+  "contract": "1.0.0",
+  "flavor": "core",
+  "milestone": null,
+  "phases": [
+    {
+      "number": "1",
+      "name": "Хранилище данных и резервные копии",
+      "status": "pending"
+    },
+    {
+      "number": "2",
+      "name": "Редактор резюме и сохранение",
+      "status": "pending"
+    },
+    {
+      "number": "3",
+      "name": "Ввод вакансии и сопоставление",
+      "status": "pending"
+    },
+    {
+      "number": "4",
+      "name": "Ручная адаптация и версии",
+      "status": "pending"
+    },
+    {
+      "number": "5",
+      "name": "Предпросмотр и PDF",
+      "status": "pending"
+    }
+  ],
+  "next": {
+    "command": "$gsd-progress --next",
+    "label": "Advance to the next step",
+    "reason": "Phase 1 of 5 · 0% · executing"
+  },
+  "updated_at": "2026-11-04T04:50:40.790Z"
+}

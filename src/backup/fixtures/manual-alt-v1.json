@@ -1,0 +1,50 @@
+{
+  "format": "resume-backup",
+  "schemaVersion": 1,
+  "exportedAt": "2026-11-04T12:00:00Z",
+  "data": {
+    "masterResume": {
+      "contacts": {
+        "fullName": "Мария Смирнова",
+        "email": "maria@example.com",
+        "phone": "+7 900 000-00-00",
+        "location": "Новосибирск"
+      },
+      "summary": "Backend-разработчик",
+      "skills": [
+        "Node.js",
+        "PostgreSQL"
+      ],
+      "workExperience": [],
+      "education": []
+    },
+    "versions": [
+      {
+        "id": "version-alt",
+        "name": "Backend",
+        "resume": {
+          "contacts": {
+            "fullName": "Мария Смирнова",
+            "email": "anna@example.com",
+            "phone": "+7 900 000-00-00",
+            "location": "Новосибирск"
+          },
+          "summary": "Backend-разработчик",
+          "skills": [
+            "Node.js",
+            "PostgreSQL"
+          ],
+          "workExperience": [],
+          "education": []
+        },
+        "vacancy": {
+          "title": "Backend-разработчик",
+          "company": "Другая компания",
+          "text": "Ищем Node.js разработчика"
+        },
+        "createdAt": "2026-11-03T10:00:00Z",
+        "updatedAt": "2026-11-04T11:00:00Z"
+      }
+    ]
+  }
+}
