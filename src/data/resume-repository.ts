@@ -38,6 +38,7 @@ export function createResumeRepository(factory?: IDBFactory): ResumeRepository {
         const fail = (error: Error) => {
           if (!settled) {
             settled = true;
+            database.close();
             reject(error);
           }
         };
@@ -45,7 +46,6 @@ export function createResumeRepository(factory?: IDBFactory): ResumeRepository {
         try {
           transaction = database.transaction(RESUME_OBJECT_STORE, 'readonly');
         } catch (error) {
-          database.close();
           fail(new ResumeStorageError('read-failed', 'Не удалось открыть данные резюме.', { cause: error }));
           return;
         }

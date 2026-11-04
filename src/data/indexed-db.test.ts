@@ -68,4 +68,40 @@ describe('resume IndexedDB repository', () => {
       category: 'permission-denied',
     });
   });
+
+  it('closes the database connection when a read request fails', async () => {
+    const openRequestState = {
+      result: undefined as IDBDatabase | undefined,
+      onupgradeneeded: null,
+      onerror: null,
+      onblocked: null,
+      onsuccess: null,
+    };
+    const openRequest = openRequestState as unknown as IDBOpenDBRequest;
+    const readRequest = { onsuccess: null, onerror: null } as unknown as IDBRequest;
+    const transaction = {
+      error: new DOMException('read failed', 'UnknownError'),
+      objectStore: vi.fn(() => ({ get: vi.fn(() => readRequest) })),
+      oncomplete: null,
+      onerror: null,
+      onabort: null,
+    } as unknown as IDBTransaction;
+    const database = {
+      objectStoreNames: { contains: () => true },
+      close: vi.fn(),
+      transaction: vi.fn(() => transaction),
+      onversionchange: null,
+    } as unknown as IDBDatabase;
+    const factory = { open: vi.fn(() => openRequest) } as unknown as IDBFactory;
+    const result = createResumeRepository(factory).readCurrent();
+
+    openRequestState.result = database;
+    openRequest.onsuccess?.(new Event('success'));
+    await Promise.resolve();
+    const rejected = expect(result).rejects.toMatchObject({ category: 'read-failed' });
+    readRequest.onerror?.(new Event('error'));
+
+    await rejected;
+    expect(database.close).toHaveBeenCalledOnce();
+  });
 });
